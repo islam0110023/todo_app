@@ -7,5 +7,6 @@ class AppColors {
   static Color primaryColor = Color(0xffffffff);
   static Color floatingActionButtonColor = Color(0xffEE01FD);
   static Color textColor = Color(0xff7A8FCE);
+  static Color textColor2 =Colors.grey;
 
 }

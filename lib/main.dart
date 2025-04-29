@@ -2,12 +2,18 @@ import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_app/features/todos/logic/todo_app_cubit.dart';
-import 'package:todo_app/features/todos/logic/todo_app_state.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_app/core/constants/constant.dart';
+import 'package:todo_app/features/todos/logic/get_notes/get_notes_cubit.dart';
+import 'package:todo_app/features/todos/model/todo_model.dart';
 import 'package:todo_app/features/todos/presentation/todo_main_screen.dart';
+import 'package:todo_app/simple_bloc_observer.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Bloc.observer = SimpleBlocObserver();
+  Hive.registerAdapter(TodoModelAdapter());
+  await Hive.openBox<TodoModel>(kNotesBox);
   runApp(
     ScreenUtilInit(
       designSize: Size(431, 844),
@@ -15,14 +21,10 @@ void main() {
       splitScreenMode: false,
       builder: (context, child) {
         return BlocProvider(
-          create: (context) => TodoAppCubit(),
-          child: Builder(
-              builder: (context) {
-                return MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  home: TodoApp(),
-                );
-              }
+          create: (context) => GetNotesCubit()..getAllNotes(),
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: TodoApp(),
           ),
         );
       },

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/core/constants/app_colors.dart';
-import 'package:todo_app/features/todos/logic/todo_app_cubit.dart';
-import 'package:todo_app/features/todos/logic/todo_app_state.dart';
+import 'package:todo_app/features/todos/logic/add_note/add_todo_app_cubit.dart';
+import 'package:todo_app/features/todos/logic/get_notes/get_notes_cubit.dart';
 import 'package:todo_app/features/todos/presentation/widget/custom_bottom_shett.dart';
 import 'package:todo_app/features/todos/presentation/widget/custom_list_item.dart';
-import 'package:todo_app/features/todos/presentation/widget/custom_list_view.dart';
 
 class TodoMainScreen extends StatelessWidget {
   const TodoMainScreen({super.key});
@@ -41,56 +39,56 @@ class TodoMainScreen extends StatelessWidget {
       backgroundColor: AppColors.backgroundColor,
       body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.r),
-          child: BlocConsumer<TodoAppCubit, TodoAppState>(
-            builder: (context, state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Hello, Islam",
+                style:
+                TextStyle(fontSize: 40.sp, color: AppColors.primaryColor),
+              ),
+              SizedBox(
+                height: 54.h,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Hello, Islam",
-                    style: TextStyle(
-                        fontSize: 40.sp, color: AppColors.primaryColor),
+                    "Today's Tasks",
+                    style:
+                    TextStyle(fontSize: 16.sp, color: AppColors.textColor),
                   ),
-                  SizedBox(
-                    height: 54.h,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Today's Tasks",
-                        style: TextStyle(
-                            fontSize: 16.sp, color: AppColors.textColor),
-                      ),
-                      Text(
-                        "${BlocProvider.of<TodoAppCubit>(context).todos.length} Tasks",
-                        style: TextStyle(
-                            fontSize: 16.sp, color: AppColors.textColor),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  CustomListItem()
+                  BlocBuilder<GetNotesCubit, GetNotesState>(
+                    builder: (context, state) {
+                      var notes=BlocProvider.of<GetNotesCubit>(context).allNotes;
+                      return Text(
+                        "${notes.length} tasks",
+                        style:
+                        TextStyle(fontSize: 16.sp, color: AppColors.textColor),
+                      );
+                    },
+                  )
                 ],
-              );
-            },
-            listener: (context, state) {},
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              CustomListItem()
+            ],
           )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
+            isScrollControlled: true,
             context: context,
+            backgroundColor: Colors.transparent,
+            transitionAnimationController: AnimationController(
+              vsync: Navigator.of(context),
+              duration: Duration(milliseconds: 999),
+              reverseDuration: Duration(milliseconds: 999),
+            ),
             builder: (context) {
-              return Animate(
-                autoPlay: true,
-                effects: [
-                  FadeEffect(
-                      duration: Duration(seconds: 1), curve: Curves.easeInOut)
-                ],
-                child: CustomBottomShett(),
-              );
+              return CustomBottomShett();
             },
           );
         },
